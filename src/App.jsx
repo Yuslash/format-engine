@@ -16,7 +16,7 @@ const INITIAL_FRAMES = [];
 export default function App() {
   const [rawText, setRawText] = useState('');
   const [frames, setFrames] = useState(INITIAL_FRAMES);
-  const [activeTheme, setActiveTheme] = useState('gaming');
+  const [activeTheme, setActiveTheme] = useState('clean');
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedFrameIds, setSelectedFrameIds] = useState(new Set());
   const [toast, setToast] = useState(null);

@@ -52,7 +52,6 @@ export default function EditableText({
       onKeyDown={handleKeyDown}
       data-placeholder={placeholder}
       style={{
-        ...style,
         outline: 'none',
         cursor: 'text',
         borderRadius: '4px',
@@ -60,8 +59,9 @@ export default function EditableText({
         margin: '-2px -4px',
         transition: 'box-shadow 0.15s ease, background 0.15s ease',
         boxShadow: isFocused ? '0 0 0 2px rgba(99,102,241,0.5)' : 'none',
-        background: isFocused ? 'rgba(99,102,241,0.05)' : 'transparent',
+        backgroundColor: isFocused ? 'rgba(99,102,241,0.05)' : 'transparent',
         minHeight: '1em',
+        ...style,
       }}
       className={className}
     />
