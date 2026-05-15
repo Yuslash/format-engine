@@ -85,18 +85,35 @@ export async function generateFrames(rawText) {
 
   const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
 
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
+  let response;
+  let retries = 3;
+  let delay = 1000;
 
-  if (!response.ok) {
-    const errorBody = await response.text();
-    console.error('Gemini API error:', errorBody);
-    throw new Error(`API Error (${response.status}): Could not connect to Gemini.`);
+  for (let i = 0; i < retries; i++) {
+    response = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    if (response.status === 503) {
+      console.warn(`Gemini API 503: High demand. Retrying in ${delay}ms... (Attempt ${i + 1}/${retries})`);
+      await new Promise(res => setTimeout(res, delay));
+      delay *= 2; // Exponential backoff
+      continue;
+    }
+    
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.error('Gemini API error:', errorBody);
+      throw new Error(`API Error (${response.status}): Could not connect to Gemini.`);
+    }
+
+    break; // Success! Break out of the retry loop.
+  }
+
+  if (!response || !response.ok) {
+    throw new Error('API Error (503): Gemini is currently overloaded. Please try again in a few minutes.');
   }
 
   const result = await response.json();
