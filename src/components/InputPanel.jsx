@@ -1,7 +1,7 @@
 /**
  * InputPanel — Left sidebar with text input and generation controls.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Wand2, Loader2, AlertCircle, FileText, Zap } from 'lucide-react';
 
 const EXAMPLE_TEXTS = [
@@ -74,7 +74,32 @@ export default function InputPanel({
   hasStarted 
 }) {
   const [showExamples, setShowExamples] = useState(false);
+  const [loadingText, setLoadingText] = useState('Structuring Content...');
   const springTransition = "all 0.9s cubic-bezier(0.16,1,0.3,1)";
+
+  const loadingPhrases = [
+    'Connecting to AI...',
+    'Analyzing text structure...',
+    'Extracting key points...',
+    'Designing visual frames...',
+    'Applying theme styles...',
+    'Finalizing layout...'
+  ];
+
+  useEffect(() => {
+    let interval;
+    if (isGenerating) {
+      let index = 0;
+      setLoadingText(loadingPhrases[0]);
+      interval = setInterval(() => {
+        index = (index + 1) % loadingPhrases.length;
+        setLoadingText(loadingPhrases[index]);
+      }, 2000);
+    } else {
+      setLoadingText('Structuring Content...');
+    }
+    return () => clearInterval(interval);
+  }, [isGenerating]);
 
   return (
     <div style={{
@@ -315,10 +340,14 @@ export default function InputPanel({
           onMouseLeave={(e) => !isGenerating && (e.currentTarget.style.transform = 'scale(1)')}
         >
           {isGenerating ? (
-            <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px', justifyContent: 'center' }}>
               <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
-              Structuring Content...
-            </>
+              <span style={{ 
+                animation: 'fadeIn 0.3s ease-in-out',
+              }}>
+                {loadingText}
+              </span>
+            </div>
           ) : (
             <>
               <Wand2 size={18} />

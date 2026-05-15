@@ -102,8 +102,8 @@ body {
    Selection
    ============================================ */
 ::selection {
-  background: var(--accent-primary);
-  color: white;
+  background: rgba(99, 102, 241, 0.35);
+  color: inherit;
 }
 
 /* ============================================
